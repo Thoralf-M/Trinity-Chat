@@ -1,0 +1,90 @@
+<!doctype html>
+<head>
+  <title>zmqsocket</title>
+  <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:300" rel="stylesheet">
+  <script src="/socket.io/socket.io.js"></script>
+  <style type="text/css">
+    @import url('https://fonts.googleapis.com/css?family=Roboto:500');
+    body {
+      background: linear-gradient(90deg, rgb(35, 37, 38), rgb(60, 67, 75));
+      font-family: 'Roboto', sans-serif;
+    }
+    .header {
+      color:rgb(240, 240, 240);
+      padding: 3%;
+      font-size: 50px;
+      text-align: center;
+      margin: -8px;
+    }
+    .header:after {
+      display: inline-block;
+      margin: 0 0 8px 20px;
+      height: 2px;
+      content: " ";
+      text-shadow: none;
+      background-color: #999;
+      width: 150px;
+    }
+    .header:before {
+      display: inline-block;
+      margin: 0 20px 8px 0;
+      height: 2px;
+      content: " ";
+      text-shadow: none;
+      background-color: #999;
+      width: 150px;
+    }
+</style>
+</head>
+
+<body style="font-family: 'Nunito Sans', sans-serif; color:black; font-size:20px" >
+  <div class="header">Trinity Chat</div>
+  <div class="info" style="color:white; margin-left: 90px;">Send a message with Trinity to any address and it will be displayed here</div>
+  <div id="messages">
+</div>                                                                                                                                                                            
+<script>
+  var hashes = []
+  var socket = io();
+  socket.emit('test', 'connected')
+
+  socket.on('tx', function (tx) {
+    if (hashes.indexOf(tx[1]) == -1) {
+      add(tx)
+      console.log(tx);
+    }
+  })
+
+  function add(array) {
+    var message = document.createElement("message");
+    message.innerHTML = '<a href="https://thetangle.org/transaction/' + array[1] + '" target="_blank" rel="noopener noreferrer">' + '<div style="font-size:13px; text-align:left; margin-top:-10px;">' + time(array[2]) + "</a>" + "</div>" + "<div>" + array[0] + "</div>"
+    message.setAttribute("style", "display: block; text-align: left; word-break: break-all; float: center; padding: 22px; background-color: white; margin-top: 13px; margin-left: 90px; margin-right:90px; border-radius: 8px;");
+    var messages = document.getElementById("messages");
+    messages.prepend(message);
+  }
+
+  function time(timestamp) {
+    var d = new Date(timestamp * 1000),
+      yyyy = d.getFullYear(),
+      mm = ('0' + (d.getMonth() + 1)).slice(-2),
+      dd = ('0' + d.getDate()).slice(-2),
+      hh = d.getHours(),
+      h = hh,
+      min = ('0' + d.getMinutes()).slice(-2),
+      ampm = 'AM',
+      time;
+    if (hh > 12) {
+      h = hh - 12;
+      ampm = 'PM';
+    } else if (hh === 12) {
+      h = 12;
+      ampm = 'PM';
+    } else if (hh == 0) {
+      h = 12;
+    }
+    time = yyyy + '-' + mm + '-' + dd + ', ' + h + ':' + min + ' ' + ampm;
+    return time;
+  }
+</script>
+</body>
+
+</html>
