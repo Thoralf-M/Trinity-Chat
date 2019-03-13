@@ -42,14 +42,14 @@ sock.on('message', msg => {
           console.log("tag: "+data[1].slice(2592, 2619))
           const txobj = txconverter.asTransactionObject(data[1])
           if (hashes.indexOf(txobj.hash) != -1) {
-            console.log("Schon vorhanden");
+            console.log("Already known");
           } else {
             var timestamp = Date.now()
             if (txobj.currentIndex == 0 && txobj.signatureMessageFragment != '9'.repeat(2187) && txobj.attachmentTimestamp>timestamp-100000) {
               let signature = converter.trytesToAscii(txobj.signatureMessageFragment.slice(0,-1))
               const pattern = /[^\x19-\xFF]*/g
               signature = signature.replace(pattern, "");
-              const result = [signature, txobj.hash, parseInt(txobj.attachmentTimestamp.toString().slice(0, 10))]
+              const result = [signature, txobj.hash, parseInt(txobj.attachmentTimestamp.toString().slice(0, 10)), txobj.value]
               hashes.push(txobj.hash)
               io.emit('tx', result)
               messages.push(result);
@@ -77,4 +77,4 @@ io.on('test', data =>{
 
 http.listen(80, '0.0.0.0', ()=>{
     console.log('listening on *:80');
-}) 
+})
