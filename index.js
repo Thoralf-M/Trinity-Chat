@@ -49,7 +49,7 @@ sock.on('message', msg => {
               let signature = converter.trytesToAscii(txobj.signatureMessageFragment.slice(0,-1))
               const pattern = /[^\x19-\xFF]*/g
               signature = signature.replace(pattern, "");
-              const result = [signature, txobj.hash, parseInt(txobj.attachmentTimestamp.toString().slice(0, 10)), txobj.value]
+              const result = [signature, txobj.hash, parseInt(txobj.attachmentTimestamp.toString().slice(0, 10)), txobj.value, txobj.bundle]
               hashes.push(txobj.hash)
               io.emit('tx', result)
               messages.push(result);
@@ -77,4 +77,4 @@ io.on('test', data =>{
 
 http.listen(80, '0.0.0.0', ()=>{
     console.log('listening on *:80');
-})
+}) 
