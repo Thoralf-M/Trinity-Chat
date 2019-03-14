@@ -5,6 +5,7 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const converter = require('@iota/converter')
 const txconverter = require('@iota/transaction-converter');
+const units = require('@iota/unit-converter')
 
 app.use(express.static(path.join(__dirname, 'js')));
 app.get('/', (req, res)=>{
@@ -49,7 +50,8 @@ sock.on('message', msg => {
               let signature = converter.trytesToAscii(txobj.signatureMessageFragment.slice(0,-1))
               const pattern = /[^\x19-\xFF]*/g
               signature = signature.replace(pattern, "");
-              const result = [signature, txobj.hash, parseInt(txobj.attachmentTimestamp.toString().slice(0, 10)), txobj.value, txobj.bundle]
+              var value=unit(txobj.value)
+              const result = [signature, txobj.hash, parseInt(txobj.attachmentTimestamp.toString().slice(0, 10)), value, txobj.bundle]
               hashes.push(txobj.hash)
               io.emit('tx', result)
               messages.push(result);
@@ -62,6 +64,25 @@ sock.on('message', msg => {
     break;
     } 
 })
+
+function unit(param){
+  var value=param 
+  function round(v, r){value = (Math.round(units.convertUnits(v, 'i', r)* 100)/100)+" "+r}
+  if (value < 1000) {
+    value += ' i'
+  } else if (value > 999 && value < 100000) {
+    round(value, "Ki")
+  } else if (value > 99999 && value < 1000000000) {
+    round(value, "Mi")
+  } else if (value > 999999999 && value < 1000000000000) {
+    round(value, "Gi")
+  } else if (value > 999999999999 && value < 1000000000000000) {
+    round(value, "Ti")
+  } else if (value > 999999999999999) {
+    round(value, "Pi")
+  }
+  return value
+}
 
 io.on('connection', socket => {
   for (var i = 0, len = messages.length; i < len; i++) {
