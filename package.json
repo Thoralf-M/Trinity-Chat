@@ -1,0 +1,24 @@
+{
+  "name": "trinity-chat",
+  "version": "1.0.0",
+  "description": "Trinity messages in the tangle",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Thoralf-M/Trinity-Chat.git"
+  },
+  "author": "Thoralf-M",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Thoralf-M/Trinity-Chat/issues"
+  },
+  "homepage": "https://github.com/Thoralf-M/Trinity-Chat#readme",
+  "dependencies": {
+    "@iota/core": "^1.0.0-beta.12",
+    "express": "^4.17.1",
+    "socket.io": "^2.2.0"
+  }
+}
