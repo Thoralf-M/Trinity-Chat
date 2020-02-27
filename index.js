@@ -20,7 +20,7 @@ io.on('test', function (socket) {
 });
 
 const zmq = require('zeromq')
-const sock = zmq.socket('sub')
+const sock = new zmq.Subscriber
 
 sock.connect('tcp://trinity.iota-tangle.io:5556')
 sock.connect('tcp://db.iota.partners:5556')
@@ -29,12 +29,14 @@ sock.connect('tcp://nodes.tangled.it:5556')
 // sock.connect('tcp://zmq.devnet.iota.org:5556')
 sock.subscribe('tx')
 
+run()
 const maxmessages = 30
 const messages = []
 let hashes = []
-sock.on('message', msg => {
-  // console.log(msg.toString('utf8')); //raw trytes
-  const data = msg.toString().split(' ') // Split to get topic & data
+async function run(){
+  for await (const [topic, msg] of sock) {
+    // console.log("received a message related to:", topic.toString())
+    const data = topic.toString().split(' ') // Split to get topic & data
   switch (
   data[0] // Use index 0 to match topic
   ) {
@@ -63,7 +65,8 @@ sock.on('message', msg => {
       }
       break;
   }
-})
+  }
+}
 
 function unit(param) {
   var value = param
